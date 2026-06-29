@@ -25,3 +25,26 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Jira Login
+      uses: atlassian/gajira-login@v3
+      with:
+        url: ${{ secrets.JIRA_URL }}
+        email: ${{ secrets.JIRA_EMAIL }}
+        apiToken: ${{ secrets.JIRA_API_TOKEN }}
+    - name: Create Jira issue on failure
+      if: always()
+      uses: atlassian/gajira-create@v3
+      with:
+        project: ${{ secrets.JIRA_PROJECT_KEY }}
+        issuetype: Bug
+        summary: "Playwright tests fallaron en workflow #${{ github.run_id }}"
+        description: |
+          ❌ Los tests de Playwright fallaron.
+          - Repo: ${{ github.repository }}
+          - Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - Branch: ${{ github.ref }}
+          Revisa el artefacto 'playwright-report' para más detalles.
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}

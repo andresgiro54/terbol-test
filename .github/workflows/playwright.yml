@@ -25,6 +25,15 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Create .jira config directory
+      run: mkdir -p /home/runner/jira
+    
+    - name: Create Jira config file
+      run: |
+        cat > /home/runner/jira/config.yml << EOF
+        project: ${{ secrets.JIRA_PROJECT_KEY }}
+        EOF
+    
     - name: Jira Login
       uses: atlassian/gajira-login@v3
       with:

@@ -1,1 +1,0 @@
-project: ${{ secrets.JIRA_PROJECT_KEY }}

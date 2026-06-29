@@ -25,6 +25,14 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+    - name: Jira Login
+      uses: atlassian/gajira-login@v3
+      with:
+        url: ${{ secrets.JIRA_URL }}
+        email: ${{ secrets.JIRA_EMAIL }}
+        apiToken: ${{ secrets.JIRA_API_TOKEN }}
+
     - name: Create .jira config directory
       run: mkdir -p /home/runner/jira
     
@@ -33,13 +41,6 @@ jobs:
         cat > /home/runner/jira/config.yml << EOF
         project: ${{ secrets.JIRA_PROJECT_KEY }}
         EOF
-    
-    - name: Jira Login
-      uses: atlassian/gajira-login@v3
-      with:
-        url: ${{ secrets.JIRA_URL }}
-        email: ${{ secrets.JIRA_EMAIL }}
-        apiToken: ${{ secrets.JIRA_API_TOKEN }}
 
     - name: Create Jira issue on failure
       if: always()
